@@ -55,18 +55,22 @@ function mostrarCompletoAlCliquear(marker: L.Marker, proyecto: Proyecto) {
 function GenerarMapa() {
   const [proyectos, setProyectos] = useState<Proyecto[]>([]);
   const [filtroId, setFiltroId] = useState<number>(0);
-  const [filtroSuperficie, setFiltroSuperficie] = useState<number>(0);
   const [filtroNombre, setFiltroNombre] = useState<string>("");
 
   useEffect(() => {
+    //inicializo mi mapa
     const map = L.map("map").setView(CENTRO_CABA, 10);
-
+    // doy carateristicas al mapa dado por la libreria leaflet
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
 
     async function obtenerProyectosPorId(id: number) {
+      /**
+       * PRE: recibe una id no negativa ni nula como parametro del formulario 
+       * POST: llama al servicio de proyectos para buscar el proyecto con dicha id
+       */
       try {
         const proyectosData = await ProyectoService.obtenerProyectosPorId(id);
         const proyectosInstancias = intanciarProyecto([proyectosData]);
@@ -79,6 +83,10 @@ function GenerarMapa() {
 
 
     async function obtenerProyectoPorNombre(nombre: string) {
+      /**
+       * PRE: recibe una nombrea no nulo como parametro del formulario 
+       * POST: llama al servicio de proyectos para buscar el proyecto con dicho nombre
+       */
       try {
         const proyectosData = await ProyectoService.obtenerProyectoPorNombre(
           nombre
@@ -92,6 +100,10 @@ function GenerarMapa() {
     }
 
     async function obtenerTodosLosProyectos() {
+      /**
+       * PRE:
+       * POST: devuelve todos los proyectos
+       */
       try {
         const proyectosData = await ProyectoService.obtenerProyectos();
         const proyectosInstancias = intanciarProyecto(proyectosData);
@@ -121,7 +133,9 @@ function GenerarMapa() {
           marker.bindPopup(
             `<b>${proyecto.nombre}</b><br/>${proyecto.descripcion}`
           );
+          // esto le da el comportamiento de mostrar con informacion basica el popUp al acercar el mouse
           marker.on("mouseover", () => mostrarPopUpAlhover(marker, proyecto));
+          // esto le da el comportamiento de mostrar  informacion completa en un popUp al cliquear
           marker.on("click", () => mostrarCompletoAlCliquear(marker, proyecto));
         });
       } catch (error) {
@@ -146,7 +160,7 @@ function GenerarMapa() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Realizar la solicitud de proyectos al presionar el botón
+   
   };
 
   return (

@@ -1,20 +1,24 @@
 from proyectos import Proyecto
 from database import Database
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 
 #constantes
 ID_PROYECTO_INDEX = PROYECTO_INDIVIDUAL = 0
 NOMBRE_INDEX = 1
 IMAGEN_INDEX = 2
 DESCRIPCION_INDEX = 3
-UBICACION_INDEX = 4
-TIPO_INMUEBLE_INDEX = 5
-TIPO_CONTRATO_INDEX = 6
-PRECIO_INDEX = 7
-ANCHO_INDEX = 8
-LARGO_INDEX = 9
+LATITUD_INDEX = 4
+LONGITUD_INDEX = 5
+TIPO_INMUEBLE_INDEX = 6
+TIPO_CONTRATO_INDEX = 7
+PRECIO_INDEX = 8
+ANCHO_INDEX = 9
+LARGO_INDEX = 10
 
 app = Flask(__name__)
+CORS(app)
+# Datos de conexión
 db = Database(usuario='root', clave='toor', bd='svpi', host='localhost', port='3306')
 
 def generar_proyecto(proyecto):
@@ -27,7 +31,8 @@ def generar_proyecto(proyecto):
                 proyecto[NOMBRE_INDEX],  
                 proyecto[IMAGEN_INDEX],  
                 proyecto[DESCRIPCION_INDEX],  
-                proyecto[UBICACION_INDEX],  
+                proyecto[LATITUD_INDEX],  
+                proyecto[LONGITUD_INDEX],  
                 proyecto[TIPO_INMUEBLE_INDEX],  
                 proyecto[TIPO_CONTRATO_INDEX],  
                 proyecto[PRECIO_INDEX],  
@@ -37,7 +42,7 @@ def generar_proyecto(proyecto):
 
 def generar_proyecto_individual(proyecto):
         """
-        PRE:el objeto se encuenta dentro de una tupla de un solo objeto
+        PRE: el objeto se encuenta dentro de una tupla de un solo objeto
         POST: genera un objeto del tipo proyecto
         """
         proyecto_obj = Proyecto( 
@@ -45,7 +50,8 @@ def generar_proyecto_individual(proyecto):
             proyecto[PROYECTO_INDIVIDUAL][NOMBRE_INDEX],  
             proyecto[PROYECTO_INDIVIDUAL][IMAGEN_INDEX],  
             proyecto[PROYECTO_INDIVIDUAL][DESCRIPCION_INDEX],  
-            proyecto[PROYECTO_INDIVIDUAL][UBICACION_INDEX],  
+            proyecto[PROYECTO_INDIVIDUAL][LATITUD_INDEX],  
+            proyecto[PROYECTO_INDIVIDUAL][LONGITUD_INDEX],  
             proyecto[PROYECTO_INDIVIDUAL][TIPO_INMUEBLE_INDEX],  
             proyecto[PROYECTO_INDIVIDUAL][TIPO_CONTRATO_INDEX],  
             proyecto[PROYECTO_INDIVIDUAL][PRECIO_INDEX],  
@@ -85,27 +91,28 @@ def crear_proyecto():
     """
     proyecto_data = request.json
     
-    required_fields = ['nombre', 'imagen', 'descripcion', 'ubicacion', 'tipo_inmueble', 'tipo_contrato', 'precio', 'ancho', 'largo']
+    required_fields = ['nombre', 'imagen', 'descripcion', 'latitud', 'longitud', 'tipo_inmueble', 'tipo_contrato', 'precio', 'ancho', 'largo']
     if not all(field in proyecto_data for field in required_fields):
         return jsonify({'error': 'Faltan campos requeridos'}), 400
     
     nuevo_proyecto = Proyecto(
         None,
-        nombre=proyecto_data['nombre'],
-        imagen=proyecto_data['imagen'],
-        descripcion=proyecto_data['descripcion'],
-        ubicacion=proyecto_data['ubicacion'],
-        tipo_inmueble=proyecto_data['tipo_inmueble'],
-        tipo_contrato=proyecto_data['tipo_contrato'],
-        precio=proyecto_data['precio'],
-        ancho=proyecto_data['ancho'],
-        largo=proyecto_data['largo']
+        nombre = proyecto_data['nombre'],
+        imagen = proyecto_data['imagen'],
+        descripcion = proyecto_data['descripcion'],
+        latitud = proyecto_data['latitud'],
+        longitud = proyecto_data['longitud'],
+        tipo_inmueble = proyecto_data['tipo_inmueble'],
+        tipo_contrato = proyecto_data['tipo_contrato'],
+        precio = proyecto_data['precio'],
+        ancho = proyecto_data['ancho'],
+        largo = proyecto_data['largo']
     )
     
     db.conectar()
     
-    query_and_values = ("INSERT INTO proyectos (nombre, imagen, descripcion, ubicacion, tipo_inmueble, tipo_contrato, precio, ancho, largo) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", 
-                        (nuevo_proyecto.nombre, nuevo_proyecto.imagen, nuevo_proyecto.descripcion, nuevo_proyecto.ubicacion, nuevo_proyecto.tipo_inmueble, nuevo_proyecto.tipo_contrato, nuevo_proyecto.precio, nuevo_proyecto.ancho, nuevo_proyecto.largo))
+    query_and_values = ("INSERT INTO proyectos (nombre, imagen, descripcion, latitud, longitud, tipo_inmueble, tipo_contrato, precio, ancho, largo) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", 
+                        (nuevo_proyecto.nombre, nuevo_proyecto.imagen, nuevo_proyecto.descripcion, nuevo_proyecto.latitud, nuevo_proyecto.longitud, nuevo_proyecto.tipo_inmueble, nuevo_proyecto.tipo_contrato, nuevo_proyecto.precio, nuevo_proyecto.ancho, nuevo_proyecto.largo))
     db.execute_query_values(query_and_values)
 
     db.desconectar()
@@ -247,3 +254,4 @@ def buscar_proyectos_por_tipo_inmueble(tipo_inmueble):
 
 if __name__ == "__main__":
     app.run(debug=True)
+   

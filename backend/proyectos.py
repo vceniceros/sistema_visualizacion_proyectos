@@ -2,12 +2,13 @@ import json
 
 
 class Proyecto:
-    def __init__(self, id_proyecto, nombre, imagen, descripcion, ubicacion, tipo_inmueble, tipo_contrato, precio, ancho, largo):
+    def __init__(self, id_proyecto, nombre, imagen, descripcion, latitud, longitud, tipo_inmueble, tipo_contrato, precio, ancho, largo):
         self.id_proyecto = id_proyecto
         self.nombre = nombre
         self.imagen = imagen
         self.descripcion = descripcion
-        self.ubicacion = ubicacion
+        self.latitud = latitud
+        self.longitud = longitud
         self.tipo_inmueble = tipo_inmueble
         self.tipo_contrato = tipo_contrato
         self.precio = precio
@@ -26,9 +27,10 @@ class Proyecto:
     def darme_su_ubicacion(self):
         """
         PRE: 
-        POST: Devuelve la ubicación de algún proyecto.
+        POST: Devuelve la ubicación de algún proyecto en forma de lista [latitud, longitud].
         """
-        return self.ubicacion
+        ubicacion = [self.latitud, self.longitud]
+        return ubicacion
 
     def devolver_precio(self):
         """
@@ -45,6 +47,8 @@ class Proyecto:
         datos_basicos = {
             "nombre": self.nombre,
             "imagen": self.imagen,
+            "latitud": self.latitud,
+            "longitud": self.longitud
         }
         return datos_basicos
        
@@ -58,7 +62,8 @@ class Proyecto:
             "id_proyecto": self.id_proyecto,
             "nombre": self.nombre,
             "descripcion": self.descripcion,
-            "ubicacion": self.ubicacion,
+            "latitud": self.latitud,
+            "longitud": self.longitud,
             "tipo_inmueble": self.tipo_inmueble,
             "tipo_contrato": self.tipo_contrato,
             "precio": self.precio,
@@ -68,7 +73,7 @@ class Proyecto:
 
 
 def proyectos_test():
-    proyecto = Proyecto(1, "prueba", "prueba", "prueba", "prueba de ubicacion", "prueba", "prueba", 100, 38, 25)
+    proyecto = Proyecto(1, "prueba", "prueba", "prueba", 0, 0, "prueba", "prueba", 100, 38, 25)
     print("la superficie es: ", proyecto.superficie())  
     print("La ubicacion es: ", proyecto.darme_su_ubicacion())  
     info_basica =   json.dumps(proyecto.devolver_informacion_basica())
